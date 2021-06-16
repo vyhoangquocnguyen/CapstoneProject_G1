@@ -19,7 +19,7 @@ Humidity: One of the studies (Lohr, 2010, 2) states that foliage plants can incr
 
 Dust: Adding plants into the room will reduce dust by at least 20% (Lohr, 2010, 2). A study shows that when the plants were in self-watering containers that watered the plants from below, the growing medium surface was dehydrated and dusty. Documenting that interior plants were associated with reduced dust under such circumstances was especially important because it allayed that the ever-increasing medium in containers might make interiors dustier.
 
-Moreover, it has psychological benefits too!!
+Moreover, it has psychological benefits too. Some of them are stated below
 
 Stress: Interior plants have been associated with reduced stress, increased pain tolerance, and improved people’s productivity. A study showing that when people are in a room with a few containerized interior plants, even when their attention is not drawn to the plants
 
