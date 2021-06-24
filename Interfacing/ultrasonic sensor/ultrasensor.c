@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-#include "ultrasonicClient.h"
 
 #define TRUE (1==1)
 
@@ -61,7 +60,7 @@ int getCM() {
     return distanceMeters * 100;
 }
 
-int runUltrasonicClient() {
+int main(void) {
     int count = 0;
     setupUltrasonic();
 
