@@ -9,7 +9,6 @@ Image Processing is embedded in the main system since the camera will pick up an
 ![image](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/blob/main/Documentation/Supported%20Documents/images/Systemblockdiagram.png?raw=true)
 
 ## Features
-Features:
 - **Smartphone control:** the device can be monitored and controlled via the BLE system or by smartphone via Wifi and Google Cloud.
 - **Auto-adjusting temperature:** with an optional enclosed space, the temperature in each slot of the device can be adjusted to a suitable level for any particular plant.
 - **Auto-adjusting humidity:** some plants may enjoy their habitat in a humid environment; our device can replicate the humidifier system’s moist air humidifier system’s moist air-control.  
