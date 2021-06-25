@@ -18,3 +18,7 @@ Features:
 - **Light system:** with the LEDs system, the device can save up to 70% of power consumption. 
 - **Music player:** yes, our device will also have a music function. You wonder why? According to a study, music increases plants’ productivity, and it improves their health and “mood.” (Mazlan, 2020).
 - **Friendly control interface:** With a touch screen built on, you can easily control your whole garden within a few steps.
+
+##Project Documents Tree:
+1. [Documenting](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/tree/main/Documentation): Includes all the power point, word files related to the project.
+2. [Interfacing](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/tree/main/Interfacing): Includes all the interfacing process that have been done.
