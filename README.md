@@ -23,4 +23,4 @@ Image Processing is embedded in the main system since the camera will pick up an
 
 ## Project Documents Tree:
 1. [Documenting](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/tree/main/Documentation): Includes all the power point, word files related to the project.
-2. [Interfacing](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/tree/main/Interfacing): Includes all the interfacing process that have been done.
+2. [Interfacing](https://github.com/vyhoangquocnguyen/CapstoneProject_G1/tree/main/Interfacing): Includes all the interfacing codes that have been done.
