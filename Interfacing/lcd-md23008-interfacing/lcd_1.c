@@ -6,18 +6,18 @@
 
 //Defines for LCD
 #define AF_BASE         100
-#define AF_E            (AF_BASE + 13) //Enable pin
-#define AF_RW           (AF_BASE + 14) //Read/ write
-#define AF_RS           (AF_BASE + 15) //Resister selec
+#define AF_E            (AF_BASE + 2) //Enable pin
+//#define AF_RW           (AF_BASE + 14) //Read/ write
+#define AF_RS           (AF_BASE + 1) //Resister selec
 
-#define AF_DB4          (AF_BASE + 12) //Data pin 4
-#define AF_DB5          (AF_BASE + 11) //Data pin 5
-#define AF_DB6          (AF_BASE + 10) //Data pin 6
-#define AF_DB7          (AF_BASE +  9) //Data pin 7
+#define AF_DB4          (AF_BASE + 3) //Data pin 4
+#define AF_DB5          (AF_BASE + 4) //Data pin 5
+#define AF_DB6          (AF_BASE + 5) //Data pin 6
+#define AF_DB7          (AF_BASE + 6) //Data pin 7
 
 static volatile int lcd; 
 //Initialise
-void lcd_init()
+void lcd_init1()
 {
      mcp23008Setup(AF_BASE, 0x20);
     lcd_init();
@@ -34,5 +34,6 @@ void lcd_input()
 int main(void)
 {
     wiringPiSetup():
+    lcd_init1();
    lcd_input();
 }
