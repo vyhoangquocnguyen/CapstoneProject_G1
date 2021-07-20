@@ -17,7 +17,7 @@
 
 static volatile int lcd; 
 //Initialise
-void lcd_init1()
+void lcd_setup()
 {
      mcp23008Setup(AF_BASE, 0x20);
     lcd_init();
@@ -34,6 +34,6 @@ void lcd_input()
 int main(void)
 {
     wiringPiSetup():
-    lcd_init1();
+    lcd_setup();
    lcd_input();
 }
