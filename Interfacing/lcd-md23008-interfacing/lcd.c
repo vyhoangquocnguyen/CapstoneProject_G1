@@ -56,7 +56,7 @@ int main()   {
 
   lcd_init(); // setup LCD
 
-  char array1[] = "Hello world!";
+ // char array1[] = "Hello world!";
 
   while (1)   {
 

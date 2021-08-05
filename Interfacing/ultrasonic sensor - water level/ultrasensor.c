@@ -6,8 +6,8 @@
 #define TRUE (1==1)
 
 // HC-SR04 ultrasonic sensor on Raspberry pi 4
-#define TRIG 22
-#define ECHO 27
+#define TRIG 4
+#define ECHO 5
 
 static volatile long startTimeUsec;
 static volatile long endTimeUsec;
@@ -49,25 +49,30 @@ int getCM() {
     long travelTimeUsec = endTimeUsec - startTimeUsec;
     double distanceMeters = 100 * ((travelTimeUsec / 1000000.0) * 340.29) / 2;
 
-    //Wait for echo end
-    long startTime = micros();
-    while (digitalRead(ECHO) == HIGH);
-    long travelTime = micros() - startTime;
-
-    //Get distance in cm
-    int distance = travelTime * 34000 / 2;
-
-    return distanceMeters * 100;
+    return distanceMeters ;
 }
 
 int main(void) {
-    int count = 0;
     setupUltrasonic();
 
-    while (count < 60) {
-        printf("Distance: %dcm\n", getCM());
-        count++;
-        delay(500); // 0.5 second
+    while (1) {
+        if (getCM() <= 3)
+        {
+            printf("Tank is full\n");
+            printf("Distance: %dcm\n", getCM());
+            delay(1000); // 0.5 second
+        }
+        else if (getCM() > 10)
+        {
+            printf("Tank is empty\n");
+            printf("Distance: %dcm\n", getCM());
+            delay(1000); // 0.5 second
+        }
+        else
+        {
+            printf("Safe zone, Distance: %dcm\n", getCM());
+            delay(1000);
+        }
     }
     return 0;
 }
