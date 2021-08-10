@@ -48,7 +48,7 @@ void ultrsetup()
     //200 ms delay to start 
     delay (200) ;
 }
-BLYNK_WRITE(V10)
+getCM()
 {
     //Send 10us pulse to trigger
     digitalWrite (GPIO_TRIGGER,  1) ;
@@ -69,29 +69,14 @@ BLYNK_WRITE(V10)
         // That was the distance there and back so halve the value
         DISTANCE=DISTANCE / 2 ;
         // This command writes result to Virtual Pin (10) and convert usec to sec 
-        Blynk.virtualWrite(10, DISTANCE  / 1000000) ;
+        Blynk.virtualWrite(V10, DISTANCE  / 1000000) ;
     }
 
 }
 
-void myTimerEvent()       		// button widget on V0 or direct access gp17 button
-{
-  uptime = (millis() / 1000);
-  Blynk.virtualWrite(V1, uptime);
-  pinStatus = digitalRead(17);
-  if(pinStatus != lastpinStatus){
-	lastpinStatus = pinStatus;
-	printf("GP17 pin status: %i\n", pinStatus);
-	if(pinStatus == 1){    // this is to synchronise V1 button if gp17 button is pressed
-		Blynk.virtualWrite(V0, 1);
-	}
-	else{
-		Blynk.virtualWrite(V0, 0);
-	}
-  }
-}
 
-void ultrasetup()
+
+void setup()
 {
     Blynk.begin(auth, serv, port);
     ultrsetup();
@@ -100,15 +85,13 @@ void ultrasetup()
 void loop()
 {
     Blynk.run();
-    if(millis() >= uptime + 1){  // 1 second intervals
-	myTimerEvent();
-  }
-}
+    getCM();
+ }
 
 int main(int argc, char* argv[])
 {
     parse_options(argc, argv, auth, serv, port);
-    ultrasetup();
+    setup();
     while(true) 
     {
         loop();
