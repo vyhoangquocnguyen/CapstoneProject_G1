@@ -45,6 +45,9 @@ BlynkSocket Blynk(_blynkTransport);
 #include <BlynkWidgets.h>
 #include <sys/time.h>
 
+#define  trig  4
+#define  echo  5
+
 BlynkTimer timer;
 
 void sendSensor()
