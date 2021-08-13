@@ -47,62 +47,29 @@ BlynkSocket Blynk(_blynkTransport);
 
 BlynkTimer timer;
 
-int distance()
-{    
-// Define GPIO to use on Pi ( wiringPI numbers )
-int GPIO_TRIGGER=4 ;
-int GPIO_ECHO=5 ;
-
-//Compensate distance from edge to sensor
-int COMP_SENSOR=0 ;
-
-//Variables used by gettimeofday
-struct timeval start, stop ; 
-
-// Set pins as output and input
-wiringPiSetup () ;
-  pinMode (GPIO_TRIGGER, OUTPUT) ;
-  pinMode (GPIO_ECHO, INPUT) ;
-
-//Set trigger to False (Low)
-digitalWrite (GPIO_TRIGGER,  0) ;
-
-//200 ms delay to start 
-delay (200) ;
-
-//Send 10us pulse to trigger
-digitalWrite (GPIO_TRIGGER,  1) ;
-delayMicroseconds (10) ;
-digitalWrite (GPIO_TRIGGER,  0) ;
-gettimeofday(&start, NULL) ;
-while (digitalRead (GPIO_ECHO)==0) 
+void sendSensor()
 {
-gettimeofday(&start, NULL) ;
-} 
-while (digitalRead (GPIO_ECHO)==1) 
-{
-gettimeofday(&stop, NULL) ;
-} 
+  digitalWrite(trig, LOW);   // Makes trigPin low
+  delayMicroseconds(2);       // 2 micro second delay
 
-// Calculate pulse length
-float TIME_DELTA, DISTANCE ;
-TIME_DELTA=(stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec) ;
+  digitalWrite(trig, HIGH);  // tigPin high
+  delayMicroseconds(10);      // trigPin high for 10 micro seconds
+  digitalWrite(trig, LOW);   // trigPin low
 
-// Distance pulse travelled in that time is time multiplied by the speed of sound (cm/s)
-DISTANCE=TIME_DELTA * 34000 ;
+  duration = pulseIn(echo, HIGH);   //Read echo pin, time in microseconds
+  distance = duration * 0.034 / 2;   //Calculating actual/real distance
 
-// That was the distance there and back so halve the value
-DISTANCE=DISTANCE / 2 ;
+  //Serial.print("Distance = ");        //Output distance on arduino serial monitor
+  printf(distance);
 
-// Add compensation
-DISTANCE=DISTANCE + COMP_SENSOR ;
-
-// This command writes result to Virtual Pin (10) and convert usec to sec 
-//Blynk.virtualWrite(V2, DISTANCE  / 1000000) ;
-
-return DISTANCE;
+ /* if(distance <= 5)
+  {
+    Blynk.tweet("My Arduino project is tweeting using @blynk_app and it’s awesome!\n #arduino #IoT #blynk");
+    Blynk.notify("Post has been twitted");
+  }*/
+  Blynk.virtualWrite(V0, distance);
+  delay(1000);                        //Pause for 3 seconds and start measuring distance again
 }
-
 // This function sends Arduino's up time every second to Virtual Pin (5).
 // In the app, Widget's reading frequency should be set to PUSH. This means
 // that you define how often to send data to Blynk App.
@@ -110,16 +77,16 @@ void myTimerEvent()
 {
   // You can send any value at any time.
   // Please don't send more that 10 values per second.
-  Blynk.virtualWrite(V5,distance());
+  //Blynk.virtualWrite(V5,sendSensor());
   delay(1000);
-  
+
   //distance();
 }
 
 void setup()
 {
   // Setup a function to be called every second
-  timer.setInterval(1000L, myTimerEvent);
+  timer.setInterval(1000L, sendSensor);
 }
 
 void loop()
