@@ -53,6 +53,33 @@ int distance;
 
 BlynkTimer timer;
 
+int pulseIn (int pin, int state)
+{
+  #define MAX_LOOPS 1000000
+  unsigned int numloops = 0;
+
+  while (digitalRead(pin) == state)
+  {
+    if (numloops++ == MAX_LOOPS)
+      return 0 ;
+  }
+
+  while (digitalRead(pin) != state)
+  {
+    if (numloops++ == MAX_LOOPS)
+      return 0 ;
+  }
+
+  int timerStart = micros();
+  while (digitalRead(pin) == state)
+  {
+    if (numloops++ == MAX_LOOPS)
+      return 0 ;
+  }
+
+  return micros() - timerStart ;
+}
+
 void sendSensor()
 {
   digitalWrite(trig, LOW);   // Makes trigPin low
