@@ -43,53 +43,64 @@
 static BlynkTransportSocket _blynkTransport;
 BlynkSocket Blynk(_blynkTransport);
 #include <BlynkWidgets.h>
+#include <sys/time.h>
 
 BlynkTimer timer;
-#define TRUE (1==1)
 
-// HC-SR04 ultrasonic sensor on Raspberry pi 4
-#define TRIG 4
-#define ECHO 5
+int distance()
+{    
+// Define GPIO to use on Pi ( wiringPI numbers )
+int GPIO_TRIGGER=4 ;
+int GPIO_ECHO=5 ;
 
-static volatile long startTimeUsec;
-static volatile long endTimeUsec;
-double speedOfSoundMetersPerSecond = 340.29;
+//Compensate distance from edge to sensor
+int COMP_SENSOR=0 ;
 
-void recordPulseLength() {
-    startTimeUsec = micros();
-    while (digitalRead(ECHO) == HIGH);
-    endTimeUsec = micros();
-}
+//Variables used by gettimeofday
+struct timeval start, stop ; 
 
-void setupUltrasonic() {
-    wiringPiSetup();
-    pinMode(TRIG, OUTPUT);
-    pinMode(ECHO, INPUT);
+// Set pins as output and input
+wiringPiSetup () ;
+  pinMode (GPIO_TRIGGER, OUTPUT) ;
+  pinMode (GPIO_ECHO, INPUT) ;
 
-    // TRIG pin must start LOW
-    // Initialize the sensor's trigger pin to low. If we don't pause
-    // after setting it to low, sometimes the sensor doesn't work right.
-    digitalWrite(TRIG, LOW);
-    delay(500); // .5 seconds
-}
+//Set trigger to False (Low)
+digitalWrite (GPIO_TRIGGER,  0) ;
 
-int getCM() {
-    // Send trig pulse
-    // Triggering the sensor for 10 microseconds will cause it to send out
-    // 8 ultrasonic (40Khz) bursts and listen for the echos.
-    digitalWrite(TRIG, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(TRIG, LOW);
+//200 ms delay to start 
+delay (200) ;
 
-    int now = micros();
-    // Wait for echo start
-    // The sensor will raise the echo pin high for the length of time that it took
-    // the ultrasonic bursts to travel round trip.
-    while (digitalRead(ECHO) == LOW && micros() - now < 30000);
-    recordPulseLength();
-    long travelTimeUsec = endTimeUsec - startTimeUsec;
-    double distanceMeters = 100 * ((travelTimeUsec / 1000000.0) * 340.29) / 2;
-    return distanceMeters ;
+//Send 10us pulse to trigger
+digitalWrite (GPIO_TRIGGER,  1) ;
+delayMicroseconds (10) ;
+digitalWrite (GPIO_TRIGGER,  0) ;
+gettimeofday(&start, NULL) ;
+while (digitalRead (GPIO_ECHO)==0) 
+{
+gettimeofday(&start, NULL) ;
+} 
+while (digitalRead (GPIO_ECHO)==1) 
+{
+gettimeofday(&stop, NULL) ;
+} 
+
+// Calculate pulse length
+float TIME_DELTA, DISTANCE ;
+TIME_DELTA=(stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec) ;
+
+// Distance pulse travelled in that time is time multiplied by the speed of sound (cm/s)
+DISTANCE=TIME_DELTA * 34000 ;
+
+// That was the distance there and back so halve the value
+DISTANCE=DISTANCE / 2 ;
+
+// Add compensation
+DISTANCE=DISTANCE + COMP_SENSOR ;
+
+// This command writes result to Virtual Pin (10) and convert usec to sec 
+//Blynk.virtualWrite(V2, DISTANCE  / 1000000) ;
+
+return DISTANCE;
 }
 
 // This function sends Arduino's up time every second to Virtual Pin (5).
@@ -99,8 +110,10 @@ void myTimerEvent()
 {
   // You can send any value at any time.
   // Please don't send more that 10 values per second.
-  Blynk.virtualWrite(V5, millis() / 1000);
-  Blynk.vỉtualWrite(V2, getCM));
+  Blynk.virtualWrite(V5,distance());
+  delay(1000);
+  
+  //distance();
 }
 
 void setup()
