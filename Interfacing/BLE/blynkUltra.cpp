@@ -48,6 +48,9 @@ BlynkSocket Blynk(_blynkTransport);
 #define  trig  4
 #define  echo  5
 
+long duration;
+int distance;
+
 BlynkTimer timer;
 
 void sendSensor()
