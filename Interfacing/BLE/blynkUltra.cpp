@@ -45,6 +45,7 @@ BlynkSocket Blynk(_blynkTransport);
 #include <BlynkWidgets.h>
 #include <sys/time.h>
 
+
 #define  trig  4
 #define  echo  5
 
@@ -80,26 +81,41 @@ int pulseIn (int pin, int state)
   return micros() - timerStart ;
 }
 
+#define TRIG 5
+#define ECHO 6
+ 
+void setupUltra() {
+        wiringPiSetup();
+        pinMode(TRIG, OUTPUT);
+        pinMode(ECHO, INPUT);
+ 
+        //TRIG pin must start LOW
+        digitalWrite(TRIG, LOW);
+        delay(30);
+}
+ 
+int getCM() {
+        //Send trig pulse
+        digitalWrite(TRIG, HIGH);
+        delayMicroseconds(20);
+        digitalWrite(TRIG, LOW);
+ 
+        //Wait for echo start
+        while(digitalRead(ECHO) == LOW);
+ 
+        //Wait for echo end
+        long startTime = micros();
+        while(digitalRead(ECHO) == HIGH);
+        long travelTime = micros() - startTime;
+ 
+        //Get distance in cm
+        int distance = travelTime / 58;
+ 
+        return distance;
+}
 void sendSensor()
 {
-  digitalWrite(trig, LOW);   // Makes trigPin low
-  delayMicroseconds(2);       // 2 micro second delay
-
-  digitalWrite(trig, HIGH);  // tigPin high
-  delayMicroseconds(10);      // trigPin high for 10 micro seconds
-  digitalWrite(trig, LOW);   // trigPin low
-
-  duration = pulseIn(echo, HIGH);   //Read echo pin, time in microseconds
-  distance = duration * 0.034 / 2;   //Calculating actual/real distance
-
-  //Serial.print("Distance = ");        //Output distance on arduino serial monitor
-  printf(distance);
-
- /* if(distance <= 5)
-  {
-    Blynk.tweet("My Arduino project is tweeting using @blynk_app and it’s awesome!\n #arduino #IoT #blynk");
-    Blynk.notify("Post has been twitted");
-  }*/
+  distance = getCM();
   Blynk.virtualWrite(V0, distance);
   delay(1000);                        //Pause for 3 seconds and start measuring distance again
 }
@@ -120,6 +136,8 @@ void setup()
 {
   // Setup a function to be called every second
   timer.setInterval(1000L, sendSensor);
+
+  setupUltra();
 }
 
 void loop()
