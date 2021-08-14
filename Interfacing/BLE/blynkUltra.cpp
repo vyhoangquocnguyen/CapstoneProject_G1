@@ -45,41 +45,10 @@ BlynkSocket Blynk(_blynkTransport);
 #include <BlynkWidgets.h>
 #include <sys/time.h>
 
-
-#define  trig  4
-#define  echo  5
-
 long duration;
-int distance;
+int distance1;
 
 BlynkTimer timer;
-
-int pulseIn (int pin, int state)
-{
-  #define MAX_LOOPS 1000000
-  unsigned int numloops = 0;
-
-  while (digitalRead(pin) == state)
-  {
-    if (numloops++ == MAX_LOOPS)
-      return 0 ;
-  }
-
-  while (digitalRead(pin) != state)
-  {
-    if (numloops++ == MAX_LOOPS)
-      return 0 ;
-  }
-
-  int timerStart = micros();
-  while (digitalRead(pin) == state)
-  {
-    if (numloops++ == MAX_LOOPS)
-      return 0 ;
-  }
-
-  return micros() - timerStart ;
-}
 
 #define TRIG 5
 #define ECHO 6
@@ -115,8 +84,8 @@ int getCM() {
 }
 void sendSensor()
 {
-  distance = getCM();
-  Blynk.virtualWrite(V0, distance);
+  distance1 = getCM();
+  Blynk.virtualWrite(V0, distance1);
   delay(1000);                        //Pause for 3 seconds and start measuring distance again
 }
 // This function sends Arduino's up time every second to Virtual Pin (5).
