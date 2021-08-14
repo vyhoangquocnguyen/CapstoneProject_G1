@@ -50,8 +50,8 @@ int distance1;
 
 BlynkTimer timer;
 
-#define TRIG 5
-#define ECHO 6
+#define TRIG 4
+#define ECHO 5
  
 void setupUltra() {
         wiringPiSetup();
