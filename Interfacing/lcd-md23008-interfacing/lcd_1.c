@@ -52,7 +52,7 @@ void lcd_setup()
 
 int main(void)
 {
-    wiringPiSetup():
+    //wiringPiSetup():
     lcd_setup();
    //lcd_input();
 }
