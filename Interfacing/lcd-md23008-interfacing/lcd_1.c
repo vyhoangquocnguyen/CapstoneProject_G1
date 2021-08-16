@@ -54,5 +54,5 @@ int main(void)
 {
     wiringPiSetup():
     lcd_setup();
-   lcd_input();
+   //lcd_input();
 }
