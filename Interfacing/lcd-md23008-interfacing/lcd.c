@@ -1,160 +1,63 @@
-
-/*
-*
-* by Lewis Loflin www.bristolwatch.com lewis@bvu.net
-* http://www.bristolwatch.com/rpi/i2clcd.htm
-* Using wiringPi by Gordon Henderson
-*
-*
-* Port over lcd_i2c.py to C and added improvements.
-* Supports 16x2 and 20x4 screens.
-* This was to learn now the I2C lcd displays operate.
-* There is no warrenty of any kind use at your own risk.
-*
-*/
-
-#include <wiringPiI2C.h>
-#include <wiringPi.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <wiringPi.h>
+#include <mcp23008.h>
+#include <lcd.h>
 
-// Define some device parameters
-#define I2C_ADDR   0x27 // I2C device address
+//Defines for LCD
+#define AF_BASE         100
+#define AF_E            (AF_BASE + 2) //Enable pin
 
-// Define some device constants
-#define LCD_CHR  1 // Mode - Sending data
-#define LCD_CMD  0 // Mode - Sending command
+#define AF_RS           (AF_BASE + 1) //Resister selec
 
-#define LINE1  0x80 // 1st line
-#define LINE2  0xC0 // 2nd line
+#define AF_DB4          (AF_BASE + 3) //Data pin 4
+#define AF_DB5          (AF_BASE + 4) //Data pin 5
+#define AF_DB6          (AF_BASE + 5) //Data pin 6
+#define AF_DB7          (AF_BASE + 6) //Data pin 7
 
-#define LCD_BACKLIGHT   0x08  // On
-// LCD_BACKLIGHT = 0x00  # Off
+static volatile int lcd;
+static volatile float temp; 
+static volatile int humid;
+//Initialise
+void lcd_setup()
+{
+     mcp23008Setup(AF_BASE, 0x20);
+    lcd_init();
+    lcd = lcdInit (2, 16, 4, AF_RS, AF_E, AF_DB4, AF_DB5, AF_DB6, AF_DB7, 0, 0, 0, 0);
+    
+}
+int lcd_input(int msg)
+{
+    lcdClear(lcd);
+    
+    switch(msg)
+    {
+        case 1:
+            lcdClear(lcd);
+            lcdPosition(lcd,0,0);
+            lcdPuts(lcd,"Temperature: %f C", temp);
+            lcdPosition(lcd,0,1);
+            lcdPuts(lcd,"Humidity: %d %", humid);
+        break;
 
-#define ENABLE  0b00000100 // Enable bit
+        case 2:
+            lcdClear(lcd);
+            lcdPosition(lcd,0,0);
+            lcdPuts(lcd,"Water level");
+        break;
 
-void lcd_init(void);
-void lcd_byte(int bits, int mode);
-void lcd_toggle_enable(int bits);
+        default:
 
-// added by Lewis
-void typeInt(int i);
-void typeFloat(float myFloat);
-void lcdLoc(int line); //move cursor
-void ClrLcd(void); // clr LCD return home
-void typeln(const char *s);
-void typeChar(char val);
-int fd;  // seen by all subroutines
-
-int main()   {
-
-  if (wiringPiSetup () == -1) exit (1);
-
-  fd = wiringPiI2CSetup(I2C_ADDR);
-
-  //printf("fd = %d ", fd);
-
-  lcd_init(); // setup LCD
-
- // char array1[] = "Hello world!";
-
-  while (1)   {
-
-    lcdLoc(LINE1);
-    typeln("Testing LCD");
-    lcdLoc(LINE2);
-    typeln("using WiringPi.");
-
-    delay(2000);
-    ClrLcd();
-    lcdLoc(LINE1);
-    typeln("I2c  Programmed");
-    lcdLoc(LINE2);
-    typeln("in C not Python.");
-
-  }
-
-  return 0;
-
+    }
+    
+    lcdPuts(lcd,"Hello there");
 }
 
+int main(void)
+{
+    
+    wiringPiSetup():
+    lcd_setup();
+   // lcd_input();
 
-// float to string
-void typeFloat(float myFloat)   {
-  char buffer[20];
-  sprintf(buffer, "%4.2f",  myFloat);
-  typeln(buffer);
-}
-
-// int to string
-void typeInt(int i)   {
-  char array1[20];
-  sprintf(array1, "%d",  i);
-  typeln(array1);
-}
-
-// clr lcd go home loc 0x80
-void ClrLcd(void)   {
-  lcd_byte(0x01, LCD_CMD);
-  lcd_byte(0x02, LCD_CMD);
-}
-
-// go to location on LCD
-void lcdLoc(int line)   {
-  lcd_byte(line, LCD_CMD);
-}
-
-// out char to LCD at current position
-void typeChar(char val)   {
-
-  lcd_byte(val, LCD_CHR);
-}
-
-
-// this allows use of any size string
-void typeln(const char *s)   {
-
-  while ( *s ) lcd_byte(*(s++), LCD_CHR);
-
-}
-
-void lcd_byte(int bits, int mode)   {
-
-  //Send byte to data pins
-  // bits = the data
-  // mode = 1 for data, 0 for command
-  int bits_high;
-  int bits_low;
-  // uses the two half byte writes to LCD
-  bits_high = mode | (bits & 0xF0) | LCD_BACKLIGHT ;
-  bits_low = mode | ((bits << 4) & 0xF0) | LCD_BACKLIGHT ;
-
-  // High bits
-  wiringPiI2CReadReg8(fd, bits_high);
-  lcd_toggle_enable(bits_high);
-
-  // Low bits
-  wiringPiI2CReadReg8(fd, bits_low);
-  lcd_toggle_enable(bits_low);
-}
-
-void lcd_toggle_enable(int bits)   {
-  // Toggle enable pin on LCD display
-  delayMicroseconds(500);
-  wiringPiI2CReadReg8(fd, (bits | ENABLE));
-  delayMicroseconds(500);
-  wiringPiI2CReadReg8(fd, (bits & ~ENABLE));
-  delayMicroseconds(500);
-}
-
-
-void lcd_init()   {
-  // Initialise display
-  lcd_byte(0x33, LCD_CMD); // Initialise
-  lcd_byte(0x32, LCD_CMD); // Initialise
-  lcd_byte(0x06, LCD_CMD); // Cursor move direction
-  lcd_byte(0x0C, LCD_CMD); // 0x0F On, Blink Off
-  lcd_byte(0x28, LCD_CMD); // Data length, number of lines, font size
-  lcd_byte(0x01, LCD_CMD); // Clear display
-  delayMicroseconds(500);
 }
