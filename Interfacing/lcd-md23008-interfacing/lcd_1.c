@@ -7,11 +7,11 @@
 //Defines for LCD
 #define AF_BASE         100
 #define AF_E            (AF_BASE + 2) //Enable pin
-<<<<<<< HEAD
+
 //#define AF_RW           (AF_BASE + 5) //Read/ write
-=======
+
 //#define AF_RW           (AF_BASE + 14) //Read/ write
->>>>>>> d48025bee6dfa1c94fc6b637c861f0926ee1241e
+
 #define AF_RS           (AF_BASE + 1) //Resister selec
 
 #define AF_DB4          (AF_BASE + 3) //Data pin 4
@@ -22,13 +22,9 @@
 //static volatile 
 int lcd; 
 //Initialise
-<<<<<<< HEAD
 
-
-int main(void)
-=======
 void lcd_setup()
->>>>>>> d48025bee6dfa1c94fc6b637c861f0926ee1241e
+
 {
    wiringPiSetup();
    
@@ -52,8 +48,7 @@ void lcd_setup()
     lcdClear(lcd);
     }
 }
-<<<<<<< HEAD
-=======
+
 
 int main(void)
 {
@@ -61,4 +56,3 @@ int main(void)
     lcd_setup();
    lcd_input();
 }
->>>>>>> d48025bee6dfa1c94fc6b637c861f0926ee1241e
