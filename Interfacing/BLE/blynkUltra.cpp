@@ -106,7 +106,7 @@ void setup()
   // Setup a function to be called every second
   timer.setInterval(1000L, sendSensor);
 
-  setupUltra();
+  
 }
 
 void loop()
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
   parse_options(argc, argv, auth, serv, port);
 
   Blynk.begin(auth, serv, port);
-
+  setupUltra();
   setup();
   while(true) {
     loop();
