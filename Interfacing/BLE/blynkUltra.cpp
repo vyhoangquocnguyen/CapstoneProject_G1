@@ -95,16 +95,41 @@ void myTimerEvent()
 {
   // You can send any value at any time.
   // Please don't send more that 10 values per second.
-  //Blynk.virtualWrite(V5,sendSensor());
-  delay(1000);
+  Blynk.virtualWrite(V5, millis() / 1000);
+  
+}
 
-  //distance();
+WidgetRTC rtc;
+
+// Digital clock display of the time
+void clockDisplay()
+{
+  // You can call hour(), minute(), ... at any time
+  // Please see Time library examples for details
+
+  String currentTime = String(hour()) + ":" + minute() + ":" + second();
+  String currentDate = String(day()) + " " + month() + " " + year();
+  stdout.print("Current time: ");
+  stdout.print(currentTime);
+  stdout.print(" ");
+  stdout.print(currentDate);
+  stdout.println();
+
+  // Send time to the App
+  Blynk.virtualWrite(V1, currentTime);
+  // Send date to the App
+  Blynk.virtualWrite(V2, currentDate);
+}
+
+BLYNK_CONNECTED() {
+  // Synchronize time on connection
+  rtc.begin();
 }
 
 void setup()
 {
   // Setup a function to be called every second
-  timer.setInterval(1000L, sendSensor);
+  timer.setInterval(1000L, myTimerEvent);
 
   
 }
@@ -122,7 +147,9 @@ int main(int argc, char* argv[])
   parse_options(argc, argv, auth, serv, port);
 
   Blynk.begin(auth, serv, port);
-  setupUltra();
+    wiringPiSetup();
+    pinMode(TRIG, OUTPUT);
+    pinMode(ECHO, INPUT);
   setup();
   while(true) {
     loop();
