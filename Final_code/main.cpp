@@ -185,7 +185,7 @@ delay(5000);
   pthread_t moisture_thread,temp_thread;
   sched_param param1,param2;
   
-  // pthreads  
+  // pthreads for RTOS operation 
   pthread_attr_init (&moisture_thread_attr);
   pthread_attr_init (&temp_thread_attr);
   
