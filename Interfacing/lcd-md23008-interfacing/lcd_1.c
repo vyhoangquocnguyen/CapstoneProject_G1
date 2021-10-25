@@ -8,10 +8,6 @@
 #define AF_BASE         100
 #define AF_E            (AF_BASE + 2) //Enable pin
 
-//#define AF_RW           (AF_BASE + 5) //Read/ write
-
-//#define AF_RW           (AF_BASE + 14) //Read/ write
-
 #define AF_RS           (AF_BASE + 1) //Resister selec
 
 #define AF_DB4          (AF_BASE + 3) //Data pin 4
@@ -19,40 +15,49 @@
 #define AF_DB6          (AF_BASE + 5) //Data pin 6
 #define AF_DB7          (AF_BASE + 6) //Data pin 7
 
-//static volatile 
-int lcd; 
+static volatile int lcd;
+static volatile float temp; 
+static volatile int humid;
 //Initialise
-
 void lcd_setup()
-
 {
-   wiringPiSetup();
-   
-   mcp23008Setup(AF_BASE, 0x20);
-    //lcd_init();
+     mcp23008Setup(AF_BASE, 0x20);
+    lcd_init();
     lcd = lcdInit (2, 16, 4, AF_RS, AF_E, AF_DB4, AF_DB5, AF_DB6, AF_DB7, 0, 0, 0, 0);
-    lcdClear(lcd);
-    pinMode(AF_BASE + 7, OUTPUT);
-    digitalWrite(AF_BASE + 7, HIGH); 
-    while(1)
-    {
-    lcdPosition(lcd,0,0);
-    lcdPuts(lcd,"Hello there");
-    lcdPosition(lcd,0,1);
-    lcdPuts(lcd,"How are you");
-    delay(2000);
-    lcdClear(lcd);
-    lcdPosition(lcd,0,0);
-    lcdPuts(lcd,"Bye Bye");
-    delay(2000);
-    lcdClear(lcd);
-    }
+    
 }
+int lcd_input(int msg)
+{
+    lcdClear(lcd);
+    
+    switch(msg)
+    {
+        case 1:
+            lcdClear(lcd);
+            lcdPosition(lcd,0,0);
+            lcdPuts(lcd,"Temperature: %f C", temp);
+            lcdPosition(lcd,0,1);
+            lcdPuts(lcd,"Humidity: %d %", humid);
+        break;
 
+        case 2:
+            lcdClear(lcd);
+            lcdPosition(lcd,0,0);
+            lcdPuts(lcd,"Water level");
+        break;
+
+        default:
+
+    }
+    
+    lcdPuts(lcd,"Hello there");
+}
 
 int main(void)
 {
-    //wiringPiSetup():
+    
+    wiringPiSetup():
     lcd_setup();
-   //lcd_input();
+    lcd_input();
+
 }

@@ -45,10 +45,8 @@ int getCM() {
     // the ultrasonic bursts to travel round trip.
     while (digitalRead(ECHO) == LOW && micros() - now < 30000);
     recordPulseLength();
-
     long travelTimeUsec = endTimeUsec - startTimeUsec;
     double distanceMeters = 100 * ((travelTimeUsec / 1000000.0) * 340.29) / 2;
-
     return distanceMeters ;
 }
 

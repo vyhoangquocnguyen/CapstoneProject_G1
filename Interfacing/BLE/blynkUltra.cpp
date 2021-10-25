@@ -128,8 +128,12 @@ BLYNK_CONNECTED() {
 
 void setup()
 {
+  setSyncInterval(10 * 60); // Sync interval in seconds (10 minutes)
   // Setup a function to be called every second
   timer.setInterval(1000L, myTimerEvent);
+  // Display digital clock every 10 seconds
+  timer.setInterval(10000L, clockDisplay);
+
 
   
 }
